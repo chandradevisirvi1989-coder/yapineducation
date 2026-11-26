@@ -1,0 +1,312 @@
+```html
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yapin' Education &amp; Yapin' Education Help Center</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Plus Jakarta Sans', 'sans-serif'],
+                    },
+                    colors: {
+                        yapin: {
+                            orange: '#F95724',
+                            orangeLight: '#FF784E',
+                            orangeDark: '#D94111',
+                            obsidian: '#0B0B10',
+                            surface: '#14141C',
+                            surfaceElevated: '#1C1C27',
+                        }
+                    },
+                    animation: {
+                        'float-slow': 'floatSlow 5s ease-in-out infinite',
+                        'float-delayed': 'floatSlow 6.5s ease-in-out 1.8s infinite',
+                        'pulse-glow': 'pulseGlow 3.6s ease-in-out infinite',
+                        'spin-slow': 'spin 20s linear infinite',
+                        'gradient-x': 'gradientX 6s ease infinite',
+                        'shimmer': 'shimmer 2.8s linear infinite',
+                    },
+                    keyframes: {
+                        floatSlow: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-11px) rotate(1.5deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { opacity: '0.45', transform: 'scale(1)' },
+                            '50%': { opacity: '0.82', transform: 'scale(1.07)' },
+                        },
+                        gradientX: {
+                            '0%, 100%': { backgroundPosition: '0% 50%' },
+                            '50%': { backgroundPosition: '100% 50%' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-120%)' },
+                            '100%': { transform: 'translateX(220%)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@700;800;900&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <style>
+        /* Smooth theme & layout transitions */
+        body, nav, section, footer, header, article, aside {
+            transition: background-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        border-color 0.35s cubic-bezier(0.4, 0, 0.2, 1),
+                        color 0.25s ease;
+        }
+
+        /* Scroll Reveal Animations */
+        .reveal {
+            opacity: 0;
+            transform: translateY(26px) scale(0.985);
+            transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+                        transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+        .reveal-delay-1 { transition-delay: 0.08s; }
+        .reveal-delay-2 { transition-delay: 0.16s; }
+        .reveal-delay-3 { transition-delay: 0.24s; }
+        .reveal-delay-4 { transition-delay: 0.32s; }
+
+        /* 3D Card Tilt */
+        .tilt-card {
+            transform-style: preserve-3d;
+            transition: transform 0.22s ease-out, box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+        .tilt-card:hover {
+            box-shadow: 0 22px 45px -12px rgba(249, 87, 36, 0.24);
+        }
+
+        /* Spotlight Ring when focusing one About section */
+        .spotlight-focus {
+            box-shadow: 0 0 0 3px rgba(249, 87, 36, 0.65), 0 25px 60px -15px rgba(249, 87, 36, 0.35) !important;
+            transform: scale(1.01);
+            transition: all 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        /* Typewriter cursor */
+        .typing-cursor::after {
+            content: '|';
+            color: #F95724;
+            animation: blink 0.9s step-end infinite;
+            margin-left: 2px;
+        }
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0B0B10;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #F95724;
+            border-radius: 9999px;
+        }
+    </style>
+</head>
+<body class="bg-[#FAFAFC] text-gray-900 dark:bg-[#0B0B10] dark:text-white font-sans antialiased selection:bg-[#F95724] selection:text-white overflow-x-hidden">
+
+    <!-- TOP SCROLL PROGRESS BAR -->
+    <div class="fixed top-0 left-0 right-0 h-1 z-[60] bg-transparent pointer-events-none">
+        <div id="scroll-progress-bar" class="h-full w-0 bg-gradient-to-r from-[#F95724] via-[#FF8559] to-[#F95724] shadow-[0_0_12px_rgba(249,87,36,0.8)] transition-[width] duration-75"></div>
+    </div>
+
+    <!-- AMBIENT ANIMATED PARTICLE BACKGROUND CANVAS -->
+    <canvas id="ambient-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-60 dark:opacity-75"></canvas>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="global-toast" class="fixed bottom-6 right-6 z-[110] hidden transform transition-all duration-300 translate-y-6 opacity-0">
+        <div class="bg-[#14141C] dark:bg-white text-white dark:text-[#0B0B10] border-2 border-[#F95724] px-5 py-3.5 rounded-2xl shadow-2xl flex items-center space-x-3.5">
+            <div class="w-9 h-9 rounded-xl bg-[#F95724] text-white flex items-center justify-center flex-shrink-0 shadow-md">
+                <i class="fa-solid fa-check text-sm"></i>
+            </div>
+            <div>
+                <p id="toast-title" class="font-display font-bold text-sm">Copied to Clipboard!</p>
+                <p id="toast-subtitle" class="text-xs opacity-80 font-mono">Link ready to share</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- IMAGE LIGHTBOX & LIVE BRAND ASSET MANAGER MODAL -->
+    <div id="lightbox-modal" class="fixed inset-0 z-[100] hidden bg-black/90 backdrop-blur-md flex items-center justify-center p-4">
+        <div class="relative max-w-5xl w-full bg-white dark:bg-[#14141C] border border-gray-200 dark:border-[#2C2C3A] rounded-3xl overflow-hidden shadow-2xl transform transition-all">
+            <div class="flex flex-wrap items-center justify-between gap-3 px-6 py-4 border-b border-gray-200 dark:border-[#252532]">
+                <div class="flex items-center space-x-3">
+                    <span class="w-3 h-3 rounded-full bg-[#F95724]"></span>
+                    <h3 id="lightbox-title" class="font-display font-extrabold text-lg text-gray-900 dark:text-white">Brand Artwork Preview</h3>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <label for="custom-asset-upload" class="cursor-pointer px-3.5 py-2 rounded-xl bg-[#F95724]/15 hover:bg-[#F95724] text-[#F95724] hover:text-white text-xs font-bold transition-colors flex items-center">
+                        <i class="fa-solid fa-upload mr-1.5"></i> Replace Image File
+                    </label>
+                    <input type="file" id="custom-asset-upload" accept="image/*" class="hidden">
+                    <button id="close-lightbox" type="button" aria-label="Close Preview"
+                            class="w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#22222E] hover:bg-[#F95724] text-gray-700 dark:text-white hover:text-white flex items-center justify-center transition-colors">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="p-5 sm:p-8 bg-gray-100 dark:bg-[#09090D] flex items-center justify-center">
+                <img id="lightbox-img" src="" alt="Full Artwork Preview" class="max-h-[72vh] w-auto rounded-2xl object-contain shadow-2xl border border-[#F95724]/30">
+            </div>
+        </div>
+    </div>
+
+    <!-- RUNNER PROFILE BIO MODAL -->
+    <div id="runner-modal" class="fixed inset-0 z-[100] hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="max-w-md w-full bg-white dark:bg-[#14141C] border border-gray-200 dark:border-[#2D2D3D] rounded-3xl p-7 shadow-2xl relative transform transition-all">
+            <button id="close-runner-modal" type="button" aria-label="Close Runner Profile"
+                    class="absolute top-5 right-5 w-10 h-10 rounded-xl bg-gray-100 dark:bg-[#22222E] hover:bg-[#F95724] hover:text-white text-gray-600 dark:text-gray-300 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+            <div class="flex items-center space-x-4 mb-5">
+                <div id="modal-runner-avatar" class="w-16 h-16 rounded-2xl bg-gradient-to-br from-[#F95724] to-[#C23408] text-white font-display font-extrabold text-2xl flex items-center justify-center shadow-lg shadow-[#F95724]/30">
+                    RB
+                </div>
+                <div>
+                    <div class="flex items-center space-x-2">
+                        <h3 id="modal-runner-name" class="font-display font-extrabold text-2xl text-gray-900 dark:text-white">RealBharath</h3>
+                        <span class="inline-flex items-center px-2 py-0.5 rounded-full bg-emerald-500/15 text-emerald-500 text-[10px] font-bold">
+                            ● Active
+                        </span>
+                    </div>
+                    <span id="modal-runner-role" class="inline-block mt-1 px-3 py-0.5 rounded-full bg-[#F95724]/15 text-[#F95724] text-xs font-bold">
+                        Lead / Founder
+                    </span>
+                </div>
+            </div>
+            <p id="modal-runner-bio" class="text-gray-600 dark:text-gray-300 text-sm leading-relaxed mb-4">
+                Server Runner details.
+            </p>
+            <div class="bg-gray-50 dark:bg-[#0E0E14] border border-gray-200 dark:border-[#242432] rounded-2xl p-4 mb-6">
+                <p class="text-xs font-bold uppercase tracking-wider text-gray-400 mb-2.5">Focus &amp; Responsibilities</p>
+                <div id="modal-runner-tags" class="flex flex-wrap gap-2"></div>
+            </div>
+            <div class="grid grid-cols-2 gap-2.5">
+                <a href="https://yapin.gg/invite/yapineducation" target="_blank" rel="noopener noreferrer"
+                   class="py-3 px-3 rounded-xl bg-[#F95724] hover:bg-[#D94111] text-white font-bold text-xs flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-graduation-cap mr-1.5"></i> Yapin' Education
+                </a>
+                <a href="https://yapin.gg/invite/hjxvczLNUD" target="_blank" rel="noopener noreferrer"
+                   class="py-3 px-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-xs flex items-center justify-center shadow-md">
+                    <i class="fa-solid fa-ticket mr-1.5 text-[#F95724]"></i> Help Center
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 1. GLASSMORPHIC STICKY NAVBAR -->
+    <nav class="sticky top-0 z-50 bg-white/85 dark:bg-[#0B0B10]/85 backdrop-blur-xl border-b border-gray-200/80 dark:border-[#1F1F2B]">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <!-- Brand Logo -->
+                <a href="#home" class="flex items-center space-x-3 group focus:outline-none">
+                    <div class="w-11 h-11 rounded-2xl overflow-hidden bg-black border-2 border-[#F95724]/80 group-hover:border-[#F95724] group-hover:scale-105 transition-transform flex items-center justify-center shadow-lg shadow-[#F95724]/20">
+                        <img data-asset="mascot" src="1000238326_2.png" alt="Yapin' Education Logo" class="w-full h-full object-contain">
+                    </div>
+                    <div class="flex flex-col">
+                        <span class="font-display font-extrabold text-lg sm:text-xl tracking-tight text-gray-900 dark:text-white leading-none">
+                            Yapin' <span class="text-[#F95724]">Education</span>
+                        </span>
+                        <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 tracking-wide mt-0.5">
+                            &amp; Help Center
+                        </span>
+                    </div>
+                </a>
+
+                <!-- Desktop Navigation Links -->
+                <div class="hidden lg:flex items-center space-x-6">
+                    <a href="#facilities" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">Facilities</a>
+                    <a href="#about-education" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">Education About</a>
+                    <a href="#about-help-center" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">Help Center About</a>
+                    <a href="#interactive-lab" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">Interactive Lab</a>
+                    <a href="#runners" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">Runners</a>
+                    <a href="#faq" class="text-sm font-semibold text-gray-600 dark:text-gray-300 hover:text-[#F95724] dark:hover:text-[#F95724] transition-colors">FAQ</a>
+                </div>
+
+                <!-- Right Controls -->
+                <div class="flex items-center space-x-2.5 sm:space-x-3">
+                    <!-- Dark & Light Mode Toggle -->
+                    <button id="theme-toggle" type="button" aria-label="Switch Theme"
+                            class="px-3.5 py-2.5 rounded-xl bg-gray-100 dark:bg-[#181822] border border-gray-200 dark:border-[#2A2A38] hover:border-[#F95724] text-gray-800 dark:text-gray-200 flex items-center space-x-2 text-xs sm:text-sm font-bold shadow-sm transition-all active:scale-95">
+                        <i id="theme-icon" class="fa-solid fa-sun text-[#F95724] transition-transform duration-300"></i>
+                        <span id="theme-label" class="hidden sm:inline">Light</span>
+                    </button>
+
+                    <!-- Primary Join CTA -->
+                    <a href="https://yapin.gg/invite/yapineducation" target="_blank" rel="noopener noreferrer"
+                       class="hidden sm:inline-flex items-center px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#F95724] to-[#FF6E40] hover:from-[#D94111] hover:to-[#F95724] text-white font-bold text-sm shadow-lg shadow-[#F95724]/30 transform hover:-translate-y-0.5 transition-all">
+                        <i class="fa-solid fa-graduation-cap mr-2"></i> Join Now
+                    </a>
+
+                    <!-- Mobile Menu Toggle -->
+                    <button id="mobile-menu-btn" type="button" aria-label="Menu"
+                            class="lg:hidden p-3 rounded-xl bg-gray-100 dark:bg-[#181822] border border-gray-200 dark:border-[#2A2A38] text-gray-800 dark:text-gray-200 hover:border-[#F95724]">
+                        <i class="fa-solid fa-bars text-lg" id="mobile-menu-icon"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mobile Dropdown Menu -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-white/95 dark:bg-[#111118]/95 backdrop-blur-xl border-b border-gray-200 dark:border-[#222230] px-4 pt-3 pb-6 space-y-1.5">
+            <a href="#facilities" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">Facilities &amp; Quick Jump</a>
+            <a href="#about-education" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">About Yapin' Education</a>
+            <a href="#about-help-center" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">About Help Center</a>
+            <a href="#interactive-lab" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">Interactive Explorer &amp; Matcher</a>
+            <a href="#runners" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">Server Runners</a>
+            <a href="#faq" class="mobile-link block px-4 py-3 rounded-xl text-base font-semibold text-gray-800 dark:text-gray-200 hover:bg-[#F95724]/10 hover:text-[#F95724]">FAQ</a>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5 pt-3">
+                <a href="https://yapin.gg/invite/yapineducation" target="_blank" rel="noopener noreferrer"
+                   class="flex items-center justify-center px-4 py-3.5 rounded-xl bg-[#F95724] text-white font-bold text-sm shadow-lg">
+                    <i class="fa-solid fa-graduation-cap mr-2"></i> Join Yapin' Education
+                </a>
+                <a href="https://yapin.gg/invite/hjxvczLNUD" target="_blank" rel="noopener noreferrer"
+                   class="flex items-center justify-center px-4 py-3.5 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-bold text-sm shadow-lg">
+                    <i class="fa-solid fa-headset mr-2 text-[#F95724]"></i> Join Help Center
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2. ANIMATED HERO SECTION -->
+    <header id="home" class="relative z-10 overflow-hidden pt-10 pb-16 sm:pt-16 sm:pb-24 lg:pt-20 lg:pb-28">
+        <!-- Ambient Glowing Orbs -->
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-[#F95724]/20 rounded-full blur-3xl animate-pulse-glow pointer-events-none"></div>
+        <div class="absolute top-1/3 -right-24 w-96 h-96 bg-[#FF784E]/15 rounded-full blur-3xl animate-pulse-glow pointer-events-none"></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
+                <!-- Left Content Column (7 cols) -->
+                <div class="lg:col-span-7 text-center lg:text-left reveal">
+                    <!-- Pill Badge -->
+                    <div class="inline-flex items-center space-x-2.5 px-4 py-2 rounded-full bg-[#F95724]/12 border border-[#F95724]/35 text-[#F95724] text-xs sm:text-sm font-extrabold mb-6 shadow-sm">
+                        <span class="relative flex h-2.5 w-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#F95724] opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-[#F95724]"></span>
+                        </span>
+                        <span>GLOBAL LEARNING,
